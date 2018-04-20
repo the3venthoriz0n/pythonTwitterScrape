@@ -1,0 +1,5 @@
+
+oauthlib==0.7.2
+py2app==0.7.3
+tweepy==3.3.0
+twilio==3.7.3
