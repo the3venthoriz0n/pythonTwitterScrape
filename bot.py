@@ -8,7 +8,6 @@
 import tweepy
 import time
 import sys
-import random
 import config as cfg  # import config file with authentication information
 
 argFile = str(sys.argv[1])  # pass text file to command line argument
@@ -62,52 +61,43 @@ if api.verify_credentials():
 
     def getRetweets(page):
         outputFile = open(argFile, 'w')  # open file, with argument w for write
-        for i in range(0, page):
-            retweets = api.retweets_of_me(page=i)
-            for status in retweets:
-                item = status._json
-                item = str(item) + "\n"
-                outputFile.write(item)  # write to the file
-        outputFile.close()  # close file
+        try:
+            for i in range(0, page):
+                retweets = api.retweets_of_me(page=i)
+                for status in retweets:
+                    item = status._json
+                    item = str(item) + "\n"
+                    outputFile.write(item)  # write to the file
+            outputFile.close()  # close file
+        except tweepy.TweepError:
+            print("Oh no! Something went wrong")
         return
-
-
-
-    #getRetweets(2)
 
 
 # get all tweets @ the account (mentions)
 
     def getMentions(count):
-        outputFile = open(argFile, 'a')  # open file, with argument w for write
-        mentions = api.retweets_of_me(count=count)
-        for status in mentions:
-            item = status._json
-            item = "Mention: " + str(item) + "\n"
-            outputFile.write(item)  # write to the file
-        outputFile.close()  # close file
-        return
+        outputFile = open(argFile, 'w')  # open file, with argument w for write
+        try:
+            mentions = api.retweets_of_me(count=count)
+            count = 0
+            for status in mentions:
+                count += 1
+                item = status._json
+                item = "Mention: " + str(item) + "\n"
+                outputFile.write(item)  # write to the file
+            outputFile.close()  # close file
+        except tweepy.TweepError:
+            print("Oh no! Something went wrong")
+        return count
 
 
 
-    getMentions(5)
-
-
-# count all mentions of account
-
-
-
-# save output to file, overwrite
-
-    #text = "THIS IS A TEST \nTHIS IS NEW LINE"
-    # outputFile = open(argFile, 'w')  # open file, with argument w for write
-    # outputFile.write(text)  # write to the file
-    # outputFile.close()  # close file
-
-
+    print(getMentions(200))
+    #getRetweets(2)
 
 # run script every 15 minutes
-    # time.sleep((random.randint(240, 480)) * 60)  # in seconds, run code/tweet at random interval between 240-480 minutes 4-8 hours
+    time.sleep(15 * 60)  # in seconds, run code/tweet at 15 min intervals
 
 else:
     print("Your credentials are incorrect! Check the config file")
